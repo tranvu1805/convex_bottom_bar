@@ -239,6 +239,7 @@ class ConvexAppBar extends StatefulWidget {
           cornerRadius: cornerRadius,
           curve: curve ?? Curves.easeInOut,
           chipBuilder: chipBuilder,
+          curIndex: curIndex,
         );
 
   /// Define a custom tab style by implement a [DelegateBuilder].
@@ -531,6 +532,23 @@ class ConvexAppBarState extends State<ConvexAppBar>
         widget.count != oldWidget.count) {
       _updateTabController();
       _resetState();
+    }
+    // Update active index when curIndex changes from parent
+    if (widget.curIndex != null && widget.curIndex != _currentIndex) {
+      final previousIndex = _currentIndex ?? 0;
+      _currentIndex = widget.curIndex!;
+
+      // Animate the convex part to the new position
+      if (!isFixed()) {
+        _updateAnimation(
+          from: previousIndex,
+          to: _currentIndex,
+          duration: Duration(milliseconds: _TRANSITION_DURATION),
+        );
+        _animationController?.forward();
+      }
+
+      setState(() {});
     }
   }
 
